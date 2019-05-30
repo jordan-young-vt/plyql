@@ -112,6 +112,7 @@ Arguments:
       --force-number     force a column to be interpreted as a number
       --force-unique     force a column to be interpreted as a hyperLogLog uniques
       --force-theta      force a column to be interpreted as a theta sketch
+      --force-hll      force a column to be interpreted as a theta sketch
       --force-histogram  force a column to be interpreted as an approximate histogram
 `
   )
@@ -152,6 +153,7 @@ export interface CommandLineArguments {
   "force-number"?: string[];
   "force-unique"?: string[];
   "force-theta"?: string[];
+  "force-hll"?: string[];
   "force-histogram"?: string[];
   "druid-version"?: string;
   "custom-aggregations"?: string;
@@ -197,6 +199,7 @@ export function parseArguments(): CommandLineArguments {
       "force-number": [String, Array],
       "force-unique": [String, Array],
       "force-theta": [String, Array],
+      "force-hll": [String, Array],
       "force-histogram": [String, Array],
       "druid-version": String,
       "custom-aggregations": String,
@@ -273,6 +276,11 @@ export async function run(parsed: CommandLineArguments): Promise<void> {
   let forceTheta: string[] = parsed['force-theta'] || [];
   for (let attributeName of forceTheta) {
     attributeOverrides.push({ name: attributeName, nativeType: 'thetaSketch' });
+  }
+
+  let forceHll: string[] = parsed['force-hll'] || [];
+  for (let attributeName of forceHll) {
+    attributeOverrides.push({ name: attributeName, nativeType: 'HLLSketch' });
   }
 
   let forceHistogram: string[] = parsed['force-histogram'] || [];
